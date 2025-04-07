@@ -9,7 +9,7 @@ using MelonLoader;
 using ShelfReservedSpace.InjectClasses;
 using UnityEngine;
 
-namespace ShelfReservedSpace.Patches;
+namespace ShelfReservedSpace.Patches.Persistance;
 
 public class StorageRackLoaderPatches
 {

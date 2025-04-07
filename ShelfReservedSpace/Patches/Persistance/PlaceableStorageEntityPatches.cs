@@ -4,7 +4,7 @@ using Il2CppScheduleOne.ObjectScripts;
 using MelonLoader;
 using ShelfReservedSpace.DevUtils;
 
-namespace ShelfReservedSpace.Patches;
+namespace ShelfReservedSpace.Patches.Persistance;
 
 public class PlaceableStorageEntityPatches
 {

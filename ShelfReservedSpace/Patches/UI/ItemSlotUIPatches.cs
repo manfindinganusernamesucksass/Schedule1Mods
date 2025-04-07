@@ -7,7 +7,7 @@ using ShelfReservedSpace.DevUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ShelfReservedSpace.Patches;
+namespace ShelfReservedSpace.Patches.UI;
 
 public class ItemSlotUIPatches
 {
