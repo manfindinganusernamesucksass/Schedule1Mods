@@ -4,7 +4,7 @@ using Il2CppScheduleOne.ObjectScripts;
 using MelonLoader;
 using ShelfReservedSpace.DevUtils;
 
-namespace ShelfReservedSpace.Patches.Persistance;
+namespace ShelfReservedSpace.Patches.ObjectScripts;
 
 public class PlaceableStorageEntityPatches
 {
@@ -24,11 +24,6 @@ public class PlaceableStorageEntityPatches
 
         try
         {
-            if (__instance.StorageEntity is null)
-            {
-                return;
-            }
-
             var filters = new JObject();
             foreach (var slot in __instance.StorageEntity.ItemSlots)
             {

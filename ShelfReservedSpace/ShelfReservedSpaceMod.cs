@@ -7,6 +7,7 @@ using MelonLoader;
 using MelonLoader.Utils;
 using ShelfReservedSpace.DevUtils;
 using ShelfReservedSpace.InjectClasses;
+using ShelfReservedSpace.Patches.ObjectScripts;
 using ShelfReservedSpace.Patches.Persistance;
 using ShelfReservedSpace.Patches.UI;
 using Unity.Collections;
@@ -150,5 +151,7 @@ public class ShelfReservedSpaceMod : MelonMod
         harmony.PatchAll(typeof(ItemSlotUIPatches));
         harmony.PatchAll(typeof(PlaceableStorageEntityPatches));
         harmony.PatchAll(typeof(StorageRackLoaderPatches));
+        harmony.PatchAll(typeof(BrickPressPatches));
+        harmony.PatchAll(typeof(BrickPressLoaderPatches));
     }
 }

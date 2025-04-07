@@ -4,26 +4,25 @@ using Il2CppNewtonsoft.Json.Linq;
 using Il2CppScheduleOne.EntityFramework;
 using Il2CppScheduleOne.ObjectScripts;
 using Il2CppScheduleOne.Persistence;
-using Il2CppScheduleOne.Persistence.Datas;
 using Il2CppScheduleOne.Persistence.Loaders;
 using MelonLoader;
 using ShelfReservedSpace.DevUtils;
 using ShelfReservedSpace.InjectClasses;
-using ShelfReservedSpace.Patches.ObjectScripts;
-using UnityEngine;
 
 namespace ShelfReservedSpace.Patches.Persistance;
 
-public class StorageRackLoaderPatches
+public class BrickPressLoaderPatches
 {
-    [HarmonyPatch(typeof(StorageRackLoader),
-        nameof(StorageRackLoader.Load))]
+    [HarmonyPatch(typeof(BrickPressLoader),
+    nameof(BrickPressLoader.Load))]
     [HarmonyPostfix]
-    public static void LoadPostfix(StorageRackLoader __instance, object[] __args)
+    public static void LoadPostfix(BrickPressLoader __instance, object[] __args)
     {
         try
-        {
-            if (!__instance.TryLoadFile((string)__args[0], "Data", out var text))
+		{
+            var mainPath = (string)__args[0];
+            if (!File.Exists(Il2CppSystem.IO.Path.Combine(mainPath, "Filters.json")) 
+                || !__instance.TryLoadFile(mainPath, "Filters", out var text))
             {
                 return;
             }
@@ -36,12 +35,12 @@ public class StorageRackLoaderPatches
                 return;
             }
 
-            var storageEntity = GUIDManager
+            var brickPress = GUIDManager
                 .GetObject<GridItem>(Il2CppSystem.Guid.Parse((string)jobject["GUID"]))?
-                .TryCast<PlaceableStorageEntity>()
+                .TryCast<BrickPress>()
                 ?? throw new Exception("Entity not found");
 
-            foreach (var slot in storageEntity.StorageEntity.ItemSlots)
+            foreach (var slot in brickPress.InputSlots)
             {
                 if (filters.TryGetValue(slot.SlotIndex, out var filterData))
                 {
@@ -51,7 +50,7 @@ public class StorageRackLoaderPatches
                 }
             }
         }
-        catch (Exception ex)
+		catch (Exception ex)
         {
             Melon<ShelfReservedSpaceMod>.Logger.Error("fuck me", ex);
         }
