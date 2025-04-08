@@ -3,7 +3,6 @@ using Il2CppGameKit.Utilities;
 using Il2CppScheduleOne.ItemFramework;
 using Il2CppScheduleOne.UI;
 using MelonLoader;
-using ShelfReservedSpace.DevUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +21,7 @@ public class ItemSlotUIPatches
         {
             var itemSlot = (ItemSlot)__args[0];
 
-            var slotFilter = InternalUtils.GetShelfReserverSpaceFilter(itemSlot);
+            var slotFilter = DevUtils.DevTools.GetShelfReserverSpaceFilter(itemSlot);
             if (slotFilter is null)
             {
                 DeactivateFilterImage(__instance);

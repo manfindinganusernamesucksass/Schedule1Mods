@@ -1,16 +1,13 @@
 ﻿using Il2CppScheduleOne.ItemFramework;
-using Il2CppScheduleOne.NPCs;
 using Il2CppScheduleOne.ObjectScripts;
 using Il2CppScheduleOne.UI;
 using Il2CppScheduleOne.UI.Items;
 using MelonLoader;
 using MelonLoader.Utils;
-using ShelfReservedSpace.DevUtils;
 using ShelfReservedSpace.InjectClasses;
 using ShelfReservedSpace.Patches.ObjectScripts;
 using ShelfReservedSpace.Patches.Persistance;
 using ShelfReservedSpace.Patches.UI;
-using Unity.Collections;
 using UnityEngine;
 using Path = System.IO.Path;
 
@@ -40,7 +37,7 @@ public class ShelfReservedSpaceMod : MelonMod
                     return;
                 }
 
-                var existingFilter = InternalUtils.GetShelfReserverSpaceFilter(
+                var existingFilter = DevUtils.DevTools.GetShelfReserverSpaceFilter(
                     hoveredItemSlot);
 
                 if (existingFilter is not null)
@@ -105,7 +102,6 @@ public class ShelfReservedSpaceMod : MelonMod
             {
                 return labOven.InputSlots.Contains(slot);
             }
-            // MixingStationMk2 inherits from MixingStation
             else if (slot.SlotOwner.TryCast<MixingStation>() is MixingStation mixingStation)
             {
                 return mixingStation.InputSlots.Contains(slot);
@@ -148,10 +144,13 @@ public class ShelfReservedSpaceMod : MelonMod
     private static void PatchHarmony()
     {
         var harmony = new HarmonyLib.Harmony(nameof(ShelfReservedSpaceMod));
-        harmony.PatchAll(typeof(ItemSlotUIPatches));
+
         harmony.PatchAll(typeof(PlaceableStorageEntityPatches));
+        harmony.PatchAll(typeof(StationLoaderPatches));
+
         harmony.PatchAll(typeof(StorageRackLoaderPatches));
-        harmony.PatchAll(typeof(BrickPressPatches));
-        harmony.PatchAll(typeof(BrickPressLoaderPatches));
+        harmony.PatchAll(typeof(StationWriteDataPatches));
+
+        harmony.PatchAll(typeof(ItemSlotUIPatches));
     }
 }

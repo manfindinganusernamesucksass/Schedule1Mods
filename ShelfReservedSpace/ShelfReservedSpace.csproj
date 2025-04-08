@@ -462,10 +462,10 @@
 
 	<ItemGroup>
 		<Compile Include="AssemblyInfo.cs" />
-		<Compile Include="DevUtils\InternalUtils.cs" />
+		<Compile Include="DevUtils\DevTools.cs" />
 		<Compile Include="InjectClasses\ItemFilter_ShelfReservedSpace.cs" />
-		<Compile Include="Patches\ObjectScripts\BrickPressPatches.cs" />
-		<Compile Include="Patches\Persistance\BrickPressLoaderPatches.cs" />
+		<Compile Include="Patches\ObjectScripts\StationWriteDataPatches.cs" />
+		<Compile Include="Patches\Persistance\StationLoaderPatches.cs" />
 		<Compile Include="Patches\UI\ItemSlotUIPatches.cs" />
 		<Compile Include="Patches\ObjectScripts\PlaceableStorageEntityPatches.cs" />
 		<Compile Include="ShelfReservedSpaceMod.cs" />

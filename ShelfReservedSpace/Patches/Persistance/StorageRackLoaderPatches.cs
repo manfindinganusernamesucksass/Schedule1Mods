@@ -4,13 +4,10 @@ using Il2CppNewtonsoft.Json.Linq;
 using Il2CppScheduleOne.EntityFramework;
 using Il2CppScheduleOne.ObjectScripts;
 using Il2CppScheduleOne.Persistence;
-using Il2CppScheduleOne.Persistence.Datas;
 using Il2CppScheduleOne.Persistence.Loaders;
 using MelonLoader;
 using ShelfReservedSpace.DevUtils;
 using ShelfReservedSpace.InjectClasses;
-using ShelfReservedSpace.Patches.ObjectScripts;
-using UnityEngine;
 
 namespace ShelfReservedSpace.Patches.Persistance;
 
@@ -30,7 +27,7 @@ public class StorageRackLoaderPatches
 
             var jobject = JObject.Parse(text);
 
-            var filters = InternalUtils.GetFiltersFromJson(jobject);
+            var filters = DevTools.GetFiltersFromJson(jobject);
             if (filters is null)
             {
                 return;

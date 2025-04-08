@@ -18,7 +18,8 @@ public class PlaceableStorageEntityPatches
     [HarmonyPatch(typeof(PlaceableStorageEntity),
         nameof(PlaceableStorageEntity.GetSaveString))]
     [HarmonyPostfix]
-    public static void GetSaveStringPostfix(PlaceableStorageEntity __instance, ref string __result)
+    public static void GetSaveStringPostfix(
+        PlaceableStorageEntity __instance, ref string __result)
     {
         var original = __result;
 
@@ -27,7 +28,7 @@ public class PlaceableStorageEntityPatches
             var filters = new JObject();
             foreach (var slot in __instance.StorageEntity.ItemSlots)
             {
-                var existingFilter = InternalUtils.GetShelfReserverSpaceFilter(slot);
+                var existingFilter = DevTools.GetShelfReserverSpaceFilter(slot);
                 if (existingFilter is not null)
                 {
                     filters.Add(slot.SlotIndex.ToString(),
