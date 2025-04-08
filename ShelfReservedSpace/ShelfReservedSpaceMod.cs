@@ -1,10 +1,13 @@
-﻿using Il2CppScheduleOne.UI;
+﻿using Il2CppScheduleOne.ItemFramework;
+using Il2CppScheduleOne.ObjectScripts;
+using Il2CppScheduleOne.UI;
 using Il2CppScheduleOne.UI.Items;
 using MelonLoader;
 using MelonLoader.Utils;
-using ShelfReservedSpace.DevUtils;
 using ShelfReservedSpace.InjectClasses;
-using ShelfReservedSpace.Patches;
+using ShelfReservedSpace.Patches.ObjectScripts;
+using ShelfReservedSpace.Patches.Persistance;
+using ShelfReservedSpace.Patches.UI;
 using UnityEngine;
 using Path = System.IO.Path;
 
@@ -24,38 +27,38 @@ public class ShelfReservedSpaceMod : MelonMod
     {
         try
         {
-            if (Input.GetKeyDown(_filterSwitchKeyCode)
-                && StorageMenu.Instance.OpenedStorageEntity is not null)
+            if (Input.GetKeyDown(_filterSwitchKeyCode))
             {
-                var hoveredSlot = ItemUIManager.Instance.GetHoveredItemSlot();
-                if (hoveredSlot?.assignedSlot is null
-                    || !StorageMenu.Instance.OpenedStorageEntity.ItemSlots.Contains(hoveredSlot.assignedSlot))
+                var hoveredItemSlotUi = ItemUIManager.Instance.GetHoveredItemSlot();
+                var hoveredItemSlot = hoveredItemSlotUi?.assignedSlot;
+                if (hoveredItemSlotUi is null || hoveredItemSlot is null
+                    || !CanSlotHaveShelfReservedSpaceFilter(hoveredItemSlot))
                 {
                     return;
                 }
 
-                var existingFilter = InternalUtils.GetShelfReserverSpaceFilter(
-                    hoveredSlot.assignedSlot);
+                var existingFilter = DevUtils.DevTools.GetShelfReserverSpaceFilter(
+                    hoveredItemSlot);
 
                 if (existingFilter is not null)
                 {
                     Melon<ShelfReservedSpaceMod>.Logger.Msg("Removing filter.");
 
-                    hoveredSlot.assignedSlot.Filters.Remove(existingFilter);
+                    hoveredItemSlot.Filters.Remove(existingFilter);
 
-                    ItemSlotUIPatches.DeactivateFilterImage(hoveredSlot);
+                    ItemSlotUIPatches.DeactivateFilterImage(hoveredItemSlotUi);
                 }
-                else if (hoveredSlot.assignedSlot.ItemInstance is not null)
+                else if (hoveredItemSlot.ItemInstance is not null)
                 {
                     Melon<ShelfReservedSpaceMod>.Logger.Msg($"Adding filter for " +
-                        $"{hoveredSlot.assignedSlot.ItemInstance.Definition.ID}.");
+                        $"{hoveredItemSlot.ItemInstance.Definition.ID}.");
 
-                    hoveredSlot.assignedSlot.AddFilter(
+                    hoveredItemSlot.AddFilter(
                         new ItemFilter_ShelfReservedSpace(
-                            hoveredSlot.assignedSlot.ItemInstance));
+                            hoveredItemSlot.ItemInstance));
 
-                    ItemSlotUIPatches.ActivateFilterImage(hoveredSlot,
-                        hoveredSlot.assignedSlot.ItemInstance.Icon);
+                    ItemSlotUIPatches.ActivateFilterImage(hoveredItemSlotUi,
+                        hoveredItemSlot.ItemInstance.Icon);
                 }
             }
         }
@@ -63,6 +66,61 @@ public class ShelfReservedSpaceMod : MelonMod
         {
             Melon<ShelfReservedSpaceMod>.Logger.Error(
                 "Error on user input.", ex);
+        }
+    }
+
+    private static bool CanSlotHaveShelfReservedSpaceFilter(ItemSlot slot)
+    {
+        try
+        {
+            if (StorageMenu.Instance.OpenedStorageEntity is not null
+                && StorageMenu.Instance.OpenedStorageEntity.ItemSlots.Contains(slot))
+            {
+                return StorageMenu.Instance.OpenedStorageEntity.StorageEntityName.Contains("Storage Rack");
+            }
+            else if (slot.SlotOwner is null)
+            {
+                return false;
+            }
+            else if (slot.SlotOwner.TryCast<BrickPress>() is BrickPress brickPress)
+            {
+                return brickPress.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<Cauldron>() is Cauldron cauldron)
+            {
+                return cauldron.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<ChemistryStation>() is ChemistryStation chemistryStation)
+            {
+                return chemistryStation.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<DryingRack>() is DryingRack rack)
+            {
+                return rack.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<LabOven>() is LabOven labOven)
+            {
+                return labOven.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<MixingStation>() is MixingStation mixingStation)
+            {
+                return mixingStation.InputSlots.Contains(slot);
+            }
+            else if (slot.SlotOwner.TryCast<PackagingStation>() is PackagingStation packagingStation)
+            {
+                return packagingStation.InputSlots.Contains(slot);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Melon<ShelfReservedSpaceMod>.Logger.Error(
+                "Error trying to determine if filter can be added to the slot.",
+                ex);
+            return false;
         }
     }
 
@@ -86,8 +144,13 @@ public class ShelfReservedSpaceMod : MelonMod
     private static void PatchHarmony()
     {
         var harmony = new HarmonyLib.Harmony(nameof(ShelfReservedSpaceMod));
-        harmony.PatchAll(typeof(ItemSlotUIPatches));
+
         harmony.PatchAll(typeof(PlaceableStorageEntityPatches));
+        harmony.PatchAll(typeof(StationLoaderPatches));
+
         harmony.PatchAll(typeof(StorageRackLoaderPatches));
+        harmony.PatchAll(typeof(StationWriteDataPatches));
+
+        harmony.PatchAll(typeof(ItemSlotUIPatches));
     }
 }
